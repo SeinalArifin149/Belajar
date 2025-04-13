@@ -3,104 +3,124 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cinta Website</title>
+  <title>Perkenalan Saya</title>
   <style>
     body {
       margin: 0;
-      padding: 0;
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(to right, #ff9a9e, #fad0c4);
-      color: #333;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
       overflow-x: hidden;
-      transition: background 1s ease;
     }
-
     header {
       text-align: center;
-      padding: 100px 20px 50px;
-      animation: fadeInDown 1s ease forwards;
+      padding: 100px 20px;
+      animation: fadeIn 2s ease;
     }
-
     header h1 {
-      font-size: 3rem;
-      color: #fff;
-      margin-bottom: 10px;
+      font-size: 3em;
+      color: #333;
     }
-
     header p {
-      font-size: 1.2rem;
-      color: #f0f0f0;
+      font-size: 1.2em;
+      color: #666;
+      margin-top: 10px;
     }
-
-    .quotes {
+    section {
+      padding: 60px 20px;
       max-width: 800px;
-      margin: 50px auto;
-      padding: 20px;
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 15px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      transition: transform 0.5s ease, background 0.5s ease;
-      cursor: pointer;
+      margin: 0 auto;
+      animation: slideUp 2s ease;
     }
-
-    .quotes:hover {
-      transform: scale(1.05);
-      background: rgba(255, 255, 255, 0.9);
-    }
-
-    .quotes p {
-      font-size: 1.5rem;
-      text-align: center;
+    section h2 {
+      font-size: 2em;
       color: #555;
+      text-align: center;
     }
-
+    section p {
+      font-size: 1.1em;
+      color: #777;
+      line-height: 1.8;
+      margin-top: 20px;
+      text-align: center;
+    }
+    .floating {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: #ff6b6b;
+      border-radius: 50%;
+      animation: float 6s infinite ease-in-out;
+    }
+    .floating:nth-child(even) {
+      background-color: #4ecdc4;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes float {
+      0% { transform: translateY(0) translateX(0); }
+      50% { transform: translateY(-100px) translateX(50px); }
+      100% { transform: translateY(0) translateX(0); }
+    }
     footer {
       text-align: center;
-      padding: 30px 20px;
-      font-size: 0.9rem;
-      color: #fff;
-      background: rgba(0,0,0,0.2);
-      margin-top: 50px;
-    }
-
-    @keyframes fadeInDown {
-      0% {
-        opacity: 0;
-        transform: translateY(-50px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      padding: 40px;
+      color: #888;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1>Selamat Datang di Dunia Cinta</h1>
-  <p>"Cinta adalah bahasa universal yang tak pernah usang."</p>
+  <h1>Halo, Saya Seinal Arifin</h1>
+  <p>Seorang yang mencintai dunia AI</p>
 </header>
 
-<div class="quotes">
-  <p>"Cinta sejati bukan tentang memiliki, tapi tentang menghargai."</p>
-</div>
+<section>
+  <h2>Tentang Saya</h2>
+  <p>
+    Saya seorang pengembang AI yang bersemangat menciptakan pengalaman online yang indah dan fungsional. 
+    Saya suka menggabungkan kreativitas dan teknologi untuk membuat sesuatu yang bermakna.
+  </p>
+</section>
 
-<div class="quotes">
-  <p>"Dalam setiap detak jantungku, aku menemukanmu."</p>
-</div>
-
-<div class="quotes">
-  <p>"Kamu adalah alasan aku percaya bahwa cinta itu nyata."</p>
-</div>
-
-<div class="quotes">
-  <p>"Cinta bukan mencari kesempurnaan, tapi belajar melihat ketidaksempurnaan dengan sempurna."</p>
-</div>
+<section>
+  <h2>Hobi Saya</h2>
+  <p>
+    Menulis kode, membaca buku, mendengarkan musik, dan menikmati waktu santai di alam.
+  </p>
+</section>
 
 <footer>
-  Dibuat dengan ❤️ oleh SeinalArifin149
+  &copy; 2025 Seinal. All rights reserved.
 </footer>
+
+<script>
+  // Membuat floating bubbles
+  for (let i = 0; i < 20; i++) {
+    const bubble = document.createElement('div');
+    bubble.classList.add('floating');
+    bubble.style.top = Math.random() * window.innerHeight + 'px';
+    bubble.style.left = Math.random() * window.innerWidth + 'px';
+    bubble.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    document.body.appendChild(bubble);
+  }
+
+  // Animasi scroll smooth
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.querySelector(this.getAttribute('href')).scrollIntoView({
+        behavior: 'smooth'
+      });
+    });
+  });
+</script>
 
 </body>
 </html>
