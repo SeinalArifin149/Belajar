@@ -1,20 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cinta Website</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #ff9a9e, #fad0c4);
+      color: #333;
+      overflow-x: hidden;
+      transition: background 1s ease;
+    }
+
+    header {
+      text-align: center;
+      padding: 100px 20px 50px;
+      animation: fadeInDown 1s ease forwards;
+    }
+
+    header h1 {
+      font-size: 3rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 1.2rem;
+      color: #f0f0f0;
+    }
+
+    .quotes {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: transform 0.5s ease, background 0.5s ease;
+      cursor: pointer;
+    }
+
+    .quotes:hover {
+      transform: scale(1.05);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .quotes p {
+      font-size: 1.5rem;
+      text-align: center;
+      color: #555;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: 0.9rem;
+      color: #fff;
+      background: rgba(0,0,0,0.2);
+      margin-top: 50px;
+    }
+
+    @keyframes fadeInDown {
+      0% {
+        opacity: 0;
+        transform: translateY(-50px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Perkenalkan</h1>
-    <h2>Nama
-        <h3>Seinal</h3>
-    </h2>
-    <h2>Alamat
-        <h3>Dimana aja</h3>
-    </h2>
-    <h2>No telp
-        <h3>087889817650</h3>
-    </h2>
+
+<header>
+  <h1>Selamat Datang di Dunia Cinta</h1>
+  <p>"Cinta adalah bahasa universal yang tak pernah usang."</p>
+</header>
+
+<div class="quotes">
+  <p>"Cinta sejati bukan tentang memiliki, tapi tentang menghargai."</p>
+</div>
+
+<div class="quotes">
+  <p>"Dalam setiap detak jantungku, aku menemukanmu."</p>
+</div>
+
+<div class="quotes">
+  <p>"Kamu adalah alasan aku percaya bahwa cinta itu nyata."</p>
+</div>
+
+<div class="quotes">
+  <p>"Cinta bukan mencari kesempurnaan, tapi belajar melihat ketidaksempurnaan dengan sempurna."</p>
+</div>
+
+<footer>
+  Dibuat dengan ❤️ oleh SeinalArifin149
+</footer>
+
 </body>
 </html>
