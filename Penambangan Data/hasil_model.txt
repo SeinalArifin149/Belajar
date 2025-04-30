@@ -1,0 +1,11 @@
+Best Params: {'C': 10, 'gamma': 0.001, 'kernel': 'rbf'}
+Akurasi: 60.00%
+
+              precision    recall  f1-score   support
+
+       GANAS       0.60      0.60      0.60        20
+       JINAK       0.60      0.60      0.60        20
+
+    accuracy                           0.60        40
+   macro avg       0.60      0.60      0.60        40
+weighted avg       0.60      0.60      0.60        40
