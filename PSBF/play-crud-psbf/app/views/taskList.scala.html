@@ -1,0 +1,16 @@
+@(tasks: Seq[models.Task])
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task List</title>
+</head>
+<body>
+    <h1>Tasks</h1>
+    <ul>
+        @for(task <- tasks) {
+            <li>@task.title - @task.description</li>
+        }
+    </ul>
+</body>
+</html>

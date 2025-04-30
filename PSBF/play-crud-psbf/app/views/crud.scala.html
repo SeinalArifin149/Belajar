@@ -1,0 +1,53 @@
+@()
+
+<input type="text" id="name" placeholder="Enter Name">
+<button onclick="addData()">Add</button>
+<table>
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody id="dataTable"></tbody>
+</table>
+
+<script>
+    let data = [];
+
+    function addData() {
+        let name = document.getElementById("name").value;
+        if (name) {
+            data.push(name);
+            document.getElementById("name").value = "";
+            renderTable();
+        }
+    }
+
+    function renderTable() {
+        let table = document.getElementById("dataTable");
+        table.innerHTML = "";
+        data.forEach((item, index) => {
+            table.innerHTML += `<tr>
+                <td>${item}</td>
+                <td>
+                    <button onclick="editData(${index})">Edit</button>
+                    <button onclick="deleteData(${index})">Delete</button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    function editData(index) {
+        let newName = prompt("Edit Name", data[index]);
+        if (newName) {
+            data[index] = newName;
+            renderTable();
+        }
+    }
+
+    function deleteData(index) {
+        data.splice(index, 1);
+        renderTable();
+    }
+</script>

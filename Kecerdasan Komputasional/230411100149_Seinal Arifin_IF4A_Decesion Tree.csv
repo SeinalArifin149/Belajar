@@ -1,0 +1,56 @@
+ID,Jenis bahan bakar dipakai,Bangku,penggerak,Jenis kendaraan dipakai,,Data yang di ambil,Jenis Bahan bakar di pakai,Pengerak,Jenis kendaraan dipakai
+1,bensin,4,depan,sedan,,,1,1,1
+2,bensin,2,1,sedan,,,1,1,1
+3,bensin,8,belakang,minibus,,,1,0,0
+4,diesel,6,depan,minibus,,,0,1,0
+5,bensin,5,belakang,minibus,,,1,0,0
+6,diesel,8,belakang,minibus,,,0,0,0
+7,diesel,8,belakang,minibus,,,0,0,0
+8,bensin,4,depan,sedan,,,1,1,1
+9,diesel,7,belakang,minibus,,,0,0,0
+10,bensin,4,depan,sedan,,,1,1,1
+11,bensin,2,depan,sedan,,,1,1,1
+12,diesel,6,belakang,minibus,,,0,0,0
+13,diesel,8,depan,minibus,,,0,1,0
+14,bensin,4,depan,sedan,,,1,1,1
+15,diesel,2,depan,sedan,,,0,1,1
+16,bensin,4,depan,sedan,,,,,
+17,bensin,8,belakang,minibus,,,,,
+18,bensin,4,depan,sedan,,,,,
+19,diesel,8,belakang,minibus,,,,,
+20,diesel,8,belakang,minibus,,,,,
+21,bensin,4,depan,sedan,,,,,
+22,bensin,4,depan,minibus,,,,,
+23,bensin,4,depan,sedan,,,,,
+24,bensin,4,depan,sedan,,,,,
+25,bensin,2,depan,sedan,,,,,
+26,bensin,8,belakang,minibus,,,,,
+27,diesel,6,depan,minibus,,,,,
+28,bensin,5,belakang,minibus,,,,,
+29,diesel,8,belakang,minibus,,,,,
+30,diesel,4,belakang,minibus,,,,,
+31,bensin,4,depan,sedan,,,,,
+32,diesel,5,belakang,minibus,,,,,
+33,bensin,4,depan,sedan,,,,,
+,Biner,Biner,Biener,Biner,,,,,
+,20,4,19,,,,,,
+,13,13,14,,,,,,
+,,3,,,,,,,
+,,3,,,,,,,
+,,1,,,,,,,
+,,9,,,,,,,
+,Proposisi,Proposisi,Proposisi,,,,,,
+,"0,6060","0,1212","0,5757",,,,,,
+,"0,3939","0,0606","0,4242",,,,,,
+,,"0,1515",,,,,,,
+,,"0,1818",,,,,,,
+,,"0,2121",,,,,,,
+,,"0,2424",,,,,Hasilnya,,
+,Entrophy,Entrophy,Entrophy,Entrophy,Entrophy,Entrophy,"IF Penngerak = depan,IF bahan bakar = bensin,IF bangku 2 or 4,print”sedan”",,
+,0.765,2.445,0.754,,0.754,Penggerak,"IF Penngerak = depan,IF bahan bakar = bensi,IF bangku 5 or 6 or 7 or 8print”minibus”",,
+,,,,,0.765,bahan bakar,"IF Penngerak = depan,IF bahan bakar = diesel,IF bangku 2 or 4,print”sedan”",,
+,,,,,2.445,Bangku,"IF Penngerak = depan,IF bahan bakar = diesel, IF bangku 5,pr6pr7pr8 print”Minibus”",,
+,,,,,,,"IF Penngerak = belakang ,IF bahan bakar = bensin,IF bangku 2 or 4,print”sedan”",,
+,,,,,,,"IF Penngerak = belakang ,IF bahan bakar = IF bangku 5 or 6 or 7 or 8print”minibus”",,
+,,,,,,,"IF Penngerak = belakang ,IF bahan bakar = diesel,IF bangku 2 or 4,print”sedan”",,
+,,,,,,,"IF Penngerak = belakang ,IF bahan bakar =diesel IF bangku 5 or 6 or 7 or 8print”minibus”",,
