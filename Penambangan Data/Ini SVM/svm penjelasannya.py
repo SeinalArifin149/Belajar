@@ -3,167 +3,138 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-import cv2
-import pywt
 import tkinter as tk
 from tkinter import filedialog
 from skimage.io import imread
 from skimage.color import rgb2gray
 from skimage.feature import graycomatrix, graycoprops
-from skimage.filters import threshold_otsu
 from skimage.transform import resize
 from sklearn.decomposition import PCA
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
 from sklearn import svm
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.preprocessing import StandardScaler
+import pywt
 
-# --- PILIH FOLDER GAMBAR DENGAN TKINTER ---
+# --- PILIH FOLDER GAMBAR ---
 root = tk.Tk()
 root.withdraw()
 folder_selected = filedialog.askdirectory(title='Pilih folder gambar untuk prediksi')
 print(f"Folder yang dipilih: {folder_selected}")
 
-# --- EKSTRAKSI FITUR PADA CITRA ---
+# --- EKSTRAKSI FITUR CITRA ---
 def extract_features(img):
-    # Resize gambar ke 150x150 piksel
     img_resized = resize(img, (150, 150), anti_aliasing=True)
-
-    # Konversi ke grayscale (hitam putih)
     gray = rgb2gray(img_resized)
-
-    # --- TRANSFORMASI WAVELET (HAAR) ---
     coeffs = pywt.wavedec2(gray, 'haar', level=2)
     cA2, (cH2, cV2, cD2), _ = coeffs
-    wave_feat = np.concatenate([
-        cA2.flatten(), cH2.flatten(), cV2.flatten(), cD2.flatten()
-    ])
-
-    # --- GLCM (opsional, kalau ingin tambahan fitur tekstur) ---
+    wave_feat = np.concatenate([cA2.flatten(), cH2.flatten(), cV2.flatten(), cD2.flatten()])
     gray_uint8 = (gray * 255).astype(np.uint8)
     glcm = graycomatrix(gray_uint8, distances=[1], angles=[0], symmetric=True, normed=True)
     glcm_props = [graycoprops(glcm, prop).ravel()[0] for prop in (
         'contrast', 'dissimilarity', 'homogeneity', 'energy', 'correlation', 'ASM'
     )]
+    feature_vector = np.concatenate([wave_feat[:2000], glcm_props])
+    return feature_vector
 
-    # Gabungkan fitur wavelet dan GLCM (opsional)
-    feature_vector = np.concatenate([
-        wave_feat[:2000],  # Batasi panjang agar efisien
-        glcm_props         # Fitur tekstur
-    ])
-    return feature_vector, wave_feat, glcm_props
-
-# --- MUAT DATA DAN LABELNYA DARI FOLDER ---
+# --- LOAD DATASET DARI FOLDER ---
 Categories = ['GANAS', 'JINAK']
-features, labels, wavelet_data, glcm_data = [], [], [], []
+features, labels = [], []
 
 for category in Categories:
     folder = os.path.join(folder_selected, category)
-    if not os.path.exists(folder):
-        print(f'Direktori tidak ditemukan: {folder}')
-        continue
+    if not os.path.exists(folder): continue
     for img_name in os.listdir(folder):
-        if img_name.endswith(('.png', '.jpg', '.jpeg')):
+        if img_name.lower().endswith(('.png', '.jpg', '.jpeg')):
             img_path = os.path.join(folder, img_name)
-            img = imread(img_path)
             try:
-                feat, wave_feat, glcm_props = extract_features(img)
+                img = imread(img_path)
+                feat = extract_features(img)
                 features.append(feat)
                 labels.append(Categories.index(category))
-                wavelet_data.append(wave_feat)
-                glcm_data.append(glcm_props)
-            except Exception as e:
-                print(f"Gagal memproses {img_path}: {e}")
+            except:
+                continue
 
-# --- KONVERSI FITUR & LABEL KE NUMPY ARRAY ---
 X = np.array(features)
 y = np.array(labels)
 
-# --- SIMPAN FITUR WAVELET KE CSV ---
-wavelet_df = pd.DataFrame(wavelet_data, columns=[f'wavelet_{i+1}' for i in range(len(wavelet_data[0]))])
-wavelet_df['label'] = labels  # Menambahkan label kelas
-wavelet_df.to_csv('wavelet_features.csv', index=False)
-print("Fitur Wavelet telah disimpan ke 'wavelet_features.csv'.")
+# --- NORMALISASI ---
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
 
-# --- PCA (untuk visualisasi) ---
-pca = PCA(n_components=2)  # Kurangi ke 2 dimensi
-X_pca = pca.fit_transform(X)
+# --- PCA & LDA ---
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_scaled)
 
-# --- SIMPAN FITUR PCA KE CSV ---
-pca_df = pd.DataFrame(X_pca, columns=['PCA_komponen_1', 'PCA_komponen_2'])
-pca_df['label'] = labels  # Menambahkan label kelas
-pca_df.to_csv('pca_features.csv', index=False)
-print("Fitur PCA telah disimpan ke 'pca_features.csv'.")
+lda = LDA(n_components=1)
+X_lda = lda.fit_transform(X_scaled, y)
 
-# --- LDA (untuk klasifikasi) ---
-lda = LDA(n_components=1)  # Karena hanya 2 kelas
-X_lda = lda.fit_transform(X, y)
-
-lda_df = pd.DataFrame(X_lda, columns=['LDA_komponen_1'])
-lda_df['label'] = labels  # Menambahkan label kelas
-lda_df.to_csv('lda_features.csv', index=False)
-
-print(f"Jumlah fitur setelah PCA: {X_pca.shape[1]}")
-print(f"Jumlah fitur setelah LDA: {X_lda.shape[1]}")
-
-# --- VISUALISASI PCA & LDA ---
-plt.figure(figsize=(12, 6))
-
-# PCA plot
+# --- VISUALISASI REDUKSI DIMENSI ---
+plt.figure(figsize=(12, 5))
 plt.subplot(1, 2, 1)
-plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='coolwarm', edgecolor='k', s=80)
-plt.title("PCA (2 komponen)")
+plt.scatter(X_pca[:, 0], X_pca[:, 1], c=y, cmap='coolwarm', edgecolor='k', s=60)
+plt.title("PCA (2 Komponen)")
 plt.xlabel("Komponen 1")
 plt.ylabel("Komponen 2")
-plt.colorbar()
 
-# LDA plot
 plt.subplot(1, 2, 2)
-plt.scatter(X_lda, np.zeros_like(X_lda), c=y, cmap='coolwarm', edgecolor='k', s=80)
-plt.title("LDA (1 komponen)")
+plt.scatter(X_lda, np.zeros_like(X_lda), c=y, cmap='coolwarm', edgecolor='k', s=60)
+plt.title("LDA (1 Komponen)")
 plt.xlabel("Komponen 1")
-plt.colorbar()
-
 plt.tight_layout()
 plt.show()
 
-# --- PEMBAGIAN DATA LATIH & UJI ---
-X_train, X_test, y_train, y_test = train_test_split(X_lda, y, test_size=0.2, stratify=y, random_state=42)
+# --- TRAINING & CONFUSION MATRIX ---
+def train_svm(X_data, y_data, model_name):
+    X_train, X_test, y_train, y_test = train_test_split(X_data, y_data, test_size=0.2, stratify=y_data, random_state=42)
+    model = GridSearchCV(svm.SVC(probability=True), {'C': [1, 10], 'gamma': [0.01, 0.001], 'kernel': ['rbf']})
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred) * 100
+    print(f"\n=== {model_name} ===")
+    print(f"Akurasi: {acc:.2f}%")
+    print(classification_report(y_test, y_pred, target_names=Categories))
+    return acc, y_test, y_pred
 
-# --- TRAINING MODEL SVM DENGAN GRIDSEARCHCV ---
-svc = svm.SVC(probability=True)
-param_grid = {'C': [1, 10], 'gamma': [0.01, 0.001], 'kernel': ['rbf']}
-model = GridSearchCV(svc, param_grid)
-model.fit(X_train, y_train)
+# --- FUNGSI CONFUSION MATRIX LENGKAP ---
+def plot_confusion_matrix(y_true, y_pred, title_prefix=""):
+    cm = confusion_matrix(y_true, y_pred)
+    accuracy = accuracy_score(y_true, y_pred) * 100
+    TP = cm[0][0]
+    TN = cm[1][1]
+    FP = cm[1][0]
+    FN = cm[0][1]
+    precision = TP / (TP + FP) if (TP + FP) > 0 else 0
+    recall = TP / (TP + FN) if (TP + FN) > 0 else 0
 
-# --- EVALUASI MODEL ---
-y_pred = model.predict(X_test)
-print(f"Akurasi: {accuracy_score(y_test, y_pred)*100:.2f}%")
-print(classification_report(y_test, y_pred, target_names=Categories))
+    plt.figure(figsize=(6, 5))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=Categories, yticklabels=Categories)
+    plt.xlabel('Prediksi')
+    plt.ylabel('Aktual')
+    plt.title(f'{title_prefix}\nAkurasi: {accuracy:.2f}%')
 
-# Confusion matrix
-cm = confusion_matrix(y_test, y_pred)
-plt.figure(figsize=(6,5))
-sns.heatmap(cm, annot=True, cmap='Blues', xticklabels=Categories, yticklabels=Categories)
-plt.xlabel('Prediksi')
-plt.ylabel('Aktual')
-plt.title('Confusion Matrix')
+    ax = plt.gca()
+    metrics_text = f'Presisi (GANAS): {precision:.2%}   Recall (GANAS): {recall:.2%}'
+    plt.text(0.5, -0.2, metrics_text, ha='center', va='center', transform=ax.transAxes, fontsize=10)
+
+    plt.tight_layout()
+    plt.show()
+
+# --- TRAINING MODEL DAN VISUALISASI CONFUSION MATRIX ---
+akurasi_pca, y_test_pca, y_pred_pca = train_svm(X_pca, y, "PCA + SVM")
+akurasi_lda, y_test_lda, y_pred_lda = train_svm(X_lda, y, "LDA + SVM")
+
+plot_confusion_matrix(y_test_pca, y_pred_pca, "Confusion Matrix PCA + SVM")
+plot_confusion_matrix(y_test_lda, y_pred_lda, "Confusion Matrix LDA + SVM")
+
+# --- GRAFIK BANDINGKAN AKURASI ---
+plt.figure(figsize=(6, 4))
+plt.bar(['PCA + SVM', 'LDA + SVM'], [akurasi_pca, akurasi_lda], color=['skyblue', 'salmon'])
+plt.title('Perbandingan Akurasi Model')
+plt.ylabel('Akurasi (%)')
+plt.ylim(0, 100)
+for i, acc in enumerate([akurasi_pca, akurasi_lda]):
+    plt.text(i, acc + 1, f"{acc:.2f}%", ha='center')
+plt.tight_layout()
 plt.show()
-
-# --- SIMPAN HASIL PREDIKSI DAN PROBABILITAS KE CSV ---
-y_pred_prob = model.predict_proba(X_test)
-results_df = pd.DataFrame(y_pred_prob, columns=[f'Probabilitas_{i}' for i in range(y_pred_prob.shape[1])])
-results_df['Prediksi'] = y_pred
-results_df['Label Aktual'] = y_test
-results_df.to_csv('prediction_results.csv', index=False)
-print("Hasil prediksi dan probabilitas telah disimpan ke 'prediction_results.csv'.")
-
-# --- RINGKASAN DATA ---
-print(f"Jumlah gambar GANAS: {sum(np.array(labels) == 0)}")
-print(f"Jumlah gambar JINAK: {sum(np.array(labels) == 1)}")
-
-print(f"Jumlah gambar pada data latih: {X_train.shape[0]}")
-print(f"Jumlah gambar pada data uji: {X_test.shape[0]}")
-
-# Menampilkan direktori kerja saat ini
-print("Direktori kerja saat ini:", os.getcwd())
